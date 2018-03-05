@@ -1,0 +1,15 @@
+{
+  "name": "gb2001",
+  "version": "0.1.0",
+  "license": "AGPL-3",
+  "repository": "https://github.com/vii1/madmix.git",
+  "scripts": {
+    "build": "npm run build-transcrypt && npm run build-babel",
+    "build-transcrypt": "transcrypt -n -m -dc -da src/madmix.py",
+    "build-babel": "babel src/__javascript__/madmix.js -o html/js/madmix.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1"
+  }
+}

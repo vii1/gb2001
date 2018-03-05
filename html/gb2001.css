@@ -1,0 +1,19 @@
+body {
+	background-color: black;
+	text-align: center;
+    color: white;
+    font-family: sans-serif;
+}
+
+#canvas {
+	margin: 2em auto;
+}
+
+button {
+    background-color: darkblue;
+    color: lightgrey;
+    border-radius: 1em;
+    border: 1px solid white;
+    padding: 2px 1em;
+    cursor: pointer;
+}

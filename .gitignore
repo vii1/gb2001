@@ -1,0 +1,8 @@
+__javascript__/
+__pycache__/
+/html/js/
+.mypy_cache/
+/.vs/
+/node_modules/
+/docs/
+/roms/
