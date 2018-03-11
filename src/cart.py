@@ -3,6 +3,12 @@
 # __pragma__('skip')
 from stubs import console, __new__, Uint8Array
 # __pragma__('noskip')
+from enum import Enum
+
+class Capability(Enum):
+    Capable = 0
+    Required = 1
+    Unavailable = 2
 
 class Cart:
     def __init__(self, file : str, rom : Uint8Array ):
@@ -15,3 +21,10 @@ class Cart:
                 ok = False
                 break
         console.debug('ROM Logo check ...', 'OK' if ok else 'ERROR !!!')
+        cgb_flag = {
+            0b10: Capability.Capable,
+            0b11: Capability.Required,
+        }.get( rom[0x143] >> 6, Capability.Unavailable )
+        console.debug('CGB Flag ... ', cgb_flag, '-', 'Supported' if cgb_flag != Capability.Required else 'NOT SUPPORTED !!!')
+        sgb_flag = Capable if rom[0x146] & 3 == 3 else Unavailable
+        console.debug('SGB Flag ... ', sgb_flag)

@@ -9,7 +9,8 @@ if /i "%1"=="release" (
 	mkdir html\js
 	copy /y src\__javascript__\%MAIN%.min.js html\js\%MAIN%.js
 ) else (
-	transcrypt -n -m -dc -da src\%MAIN%.py
+	::transcrypt -n -m -dc -da src\%MAIN%.py
+    transcrypt -n src\%MAIN%.py
 	if errorlevel 1 goto error
 	robocopy src\__javascript__ html\js /s /njh /njs
 	if errorlevel 8 goto error
