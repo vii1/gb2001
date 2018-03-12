@@ -3,9 +3,8 @@
 # __pragma__('skip')
 from stubs import console, __new__, Uint8Array
 # __pragma__('noskip')
-from enum import Enum
 
-class Capability(Enum):
+class Capability:
     Capable = 0
     Required = 1
     Unavailable = 2
