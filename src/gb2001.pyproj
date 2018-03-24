@@ -19,6 +19,7 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="assembler.py" />
     <Compile Include="cart.py" />
     <Compile Include="cpu.py" />
     <Compile Include="gb2001.py" />
@@ -26,6 +27,7 @@
     <Compile Include="memory.py" />
     <Compile Include="sound.py" />
     <Compile Include="stubs.py" />
+    <Compile Include="test_assembler.py" />
     <Compile Include="test_cpu.py">
       <SubType>Code</SubType>
     </Compile>
