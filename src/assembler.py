@@ -332,29 +332,29 @@ class Assembler:
             'LDI': self._parse_LDI,
             'NOP': 0x00,
             'OR': self._parse_ALU,
-            'POP': -1,
-            'PUSH': -1,
+            'POP': self._parse_PUSH_POP,
+            'PUSH': self._parse_PUSH_POP,
             'RES': self._parse_BIT,
-            'RET': -1,
+            'RET': self._parse_RET,
             'RETI': 0xD9,
-            'RL': -1,
-            'RLA': -1,
-            'RLC': -1,
-            'RLCA': -1,
-            'RR': -1,
-            'RRA': -1,
-            'RRC': -1,
-            'RRCA': -1,
-            'RST': -1,
+            'RL': self._parse_0xCB,
+            'RLA': 0x17,
+            'RLC': self._parse_0xCB,
+            'RLCA': 0x07,
+            'RR': self._parse_0xCB,
+            'RRA': 0x1F,
+            'RRC': self._parse_0xCB,
+            'RRCA': 0x0F,
+            'RST': self._parse_RST,
             'SBC': self._parse_ALU,
             'SCF': 0x37,
             'SET': self._parse_BIT,
-            'SLA': -1,
-            'SRA': -1,
-            'SRL': -1,
+            'SLA': self._parse_0xCB,
+            'SRA': self._parse_0xCB,
+            'SRL': self._parse_0xCB,
             'STOP': 0x10,
             'SUB': self._parse_ALU,
-            'SWAP': -1,
+            'SWAP': self._parse_0xCB,
             'XOR': self._parse_ALU,
             }.get(tok)
         if fn is int:
@@ -723,6 +723,7 @@ class Assembler:
             self._rule_ldd_hl(self._next_token())
         else:
             self._unexpected(tok)
+        self._next_token()
 
     def _parse_LDI(self, tok):
         if tok == 'A':
@@ -737,6 +738,7 @@ class Assembler:
             self._rule_ldi_hl(self._next_token())
         else:
             self._unexpected(tok)
+        self._next_token()
 
     def _parse_LDH(self, tok):
         if tok == 'A':
@@ -749,9 +751,43 @@ class Assembler:
             self._rule_ldh_i8(self._next_token(), i8)
         else:
             self._unexpected(tok)
+        self._next_token()
 
     def _parse_LDHL(self, tok):
         self._expect('SP')
         self._next_expect(',')
-        i8 = self._parse_int8(self._next_token, self._imem + 1)
+        i8 = self._parse_int8(self._next_token(), self._imem + 1)
         self._pred_ldhl_sp_n(i8)
+        self._next_token()
+
+    def _parse_PUSH_POP(self, tok):
+        code = 0xC1 if tok == 'POP' else 0xC5
+        tok = self._next_token()
+        if tok not in self._r16_3.keys():
+            self._unexpected(tok)
+        qq = self._r16_3[tok]
+        self._out_byte(code | (qq << 4))
+        self._next_token()
+
+    def _parse_RET(self, tok):
+        tok = self._next_token()
+        if tok in self._cc:
+            code = 0xC0 | (self._cc_code[tok] << 3)
+            self._next_token()
+        else:
+            code = 0xC9
+        self._out_byte(code)
+
+    def _parse_0xCB(self, tok):
+        code = ['RLC','RRC','RL','RR','SLA','SRA','SWAP','SRL'].index(tok) << 3
+        d = self._parse_destination(self._next_token())
+        self._out_byte(0xCB)
+        self._out_byte(code | d)
+        self._next_token()
+
+    def _parse_RST(self, tok):
+        n = self._parse_int(self._next_token())
+        if n != (n & 0x38):
+            self._error(f"Illegal address for RST: {hex(n)}")
+        self._out_byte(0xC7 | (n & 0x38))
+        self._next_token()
