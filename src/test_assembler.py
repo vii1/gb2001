@@ -47,6 +47,7 @@ class Test_assembler(unittest.TestCase):
             .align 8
             .byte 'B'
             .align $100
+            .align 4
             .byte 'C'
             .align 4
             .byte 'D'

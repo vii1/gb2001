@@ -228,9 +228,11 @@ class Assembler:
     def _parse_d_align(self, tok):
         if type(tok) is not int:
             self._error(f"Expecting integer, found '{tok}'")
-        addr = self._imem + tok - (self._imem % tok)
-        addr &= 0xFFFF
-        self._imem = addr
+        rem = self._imem % tok
+        if rem > 0:
+            addr = self._imem + tok - rem
+            addr &= 0xFFFF
+            self._imem = addr
         self._next_token()
 
     def _is_valid_label(self, tok):
