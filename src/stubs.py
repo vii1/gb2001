@@ -5,6 +5,7 @@
 window = None
 console = None
 document = None
+FileReader = None
 
 class Audio:
     loop: bool
@@ -17,4 +18,16 @@ def __new__(newobj):
 class Image:
     src: str
 
-# __pragma__('noskip')
+class Uint8Array:
+    def __init__(self, *args):
+        pass
+    def __getitem__(self, item):
+        pass
+    def __setitem__(self, key, value):
+        pass
+    @property
+    def length(self) -> int:
+        pass
+
+def Array(*args):
+    pass

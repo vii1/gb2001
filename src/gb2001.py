@@ -20,12 +20,12 @@ def main():
 
 def on_FileReader_load(e):
     arrayBuffer = e.target.result
-    file = e.target.file
+    file = e.target.file['name']
     rom = __new__(Uint8Array(arrayBuffer, 0, arrayBuffer.length))
     c = Cart(file, rom)
 
 def load_cart( file ):
     fr = __new__(FileReader())
     fr.onload = on_FileReader_load
-    fr.file = file.name
+    fr.file = file
     fr.readAsArrayBuffer( file )

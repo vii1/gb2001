@@ -4,26 +4,35 @@
 from stubs import console, __new__, Uint8Array
 # __pragma__('noskip')
 
-class Capability:
+from .enum import Enum
+
+class Capability(Enum):
     Capable = 0
     Required = 1
     Unavailable = 2
 
 class Cart:
-    def __init__(self, file : str, rom : Uint8Array ):
-        self.rom = rom
+    def __init__(self, file, rom: Uint8Array):
+        self._rom = rom
         console.debug(f"Loaded ROM: {file} - {rom.length} bytes")
-        logo = __new__(Uint8Array([206, 237, 102, 102, 204, 13, 0, 11, 3, 115, 0, 131, 0, 12, 0, 13, 0, 8, 17, 31, 136, 137, 0, 14, 220, 204, 110, 230, 221, 221, 217, 153, 187, 187, 103, 99, 110, 14, 236, 204, 221, 220, 153, 159, 187, 185, 51, 62]))
-        ok = True
-        for i in range(len(logo)):
-            if rom[0x104+i] != logo[i]:
-                ok = False
-                break
-        console.debug('ROM Logo check ...', 'OK' if ok else 'ERROR !!!')
-        cgb_flag = {
+        console.debug('ROM Logo check ...', 'OK' if self.check_logo() else 'ERROR !!!')
+        self.cgb_flag = {
             0b10: Capability.Capable,
             0b11: Capability.Required,
         }.get( rom[0x143] >> 6, Capability.Unavailable )
-        console.debug('CGB Flag ... ', cgb_flag, '-', 'Supported' if cgb_flag != Capability.Required else 'NOT SUPPORTED !!!')
-        sgb_flag = Capable if rom[0x146] & 3 == 3 else Unavailable
-        console.debug('SGB Flag ... ', sgb_flag)
+        console.debug(f'CGB Flag ... {self.cgb_flag} -', 'Supported' if self.cgb_flag != Capability.Required else 'NOT SUPPORTED !!!')
+        self.sgb_flag = Capability.Capable if rom[0x146] & 3 == 3 else Capability.Unavailable
+        console.debug(f'SGB Flag ... {self.sgb_flag}')
+        title_length = 16
+        #if self.cgb_flag != Capability.Unavailable
+
+    @property
+    def rom(self):
+        return self._rom
+
+    def check_logo(self):
+        logo = __new__(Uint8Array([206, 237, 102, 102, 204, 13, 0, 11, 3, 115, 0, 131, 0, 12, 0, 13, 0, 8, 17, 31, 136, 137, 0, 14, 220, 204, 110, 230, 221, 221, 217, 153, 187, 187, 103, 99, 110, 14, 236, 204, 221, 220, 153, 159, 187, 185, 51, 62]))
+        for i in range(len(logo)):
+            if self.rom[0x104+i] != logo[i]:
+                return False
+        return True
