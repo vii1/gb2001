@@ -25,9 +25,13 @@ class Uint8Array:
         pass
     def __setitem__(self, key, value):
         pass
+    def slice(self, begin=None, end=None):
+        pass
     @property
     def length(self) -> int:
         pass
 
 def Array(*args):
     pass
+
+String = None
